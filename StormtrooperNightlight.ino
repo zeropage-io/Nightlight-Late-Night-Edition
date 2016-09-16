@@ -1,5 +1,5 @@
 //
-// Stormtrooper Nightlight v1.1
+// Stormtrooper Nightlight v1.2
 // Copyright (C) 2016 Axel Dietrich <foobar@zeropage.io>
 // http://zeropage.io
 //
@@ -18,6 +18,10 @@
 // <http://www.gnu.org/licenses/>.
 //
 // History
+// 1.2, 13.09.2016
+//   - eSTROBE: Using EVERY_N_MILLISECONDS macro did not work. Rolled my own.
+//   - Very long touching mode button did not work. Used wrong variable names. Fixed.
+//   - eBREATH mode looks ugly on lower brightness settings. Changed amplitude.
 // 1.1, 12.09.2016
 //   - Usability: increase sensor 2nd function waiting time. one second is too short and might induce unwanted triggers.
 //   - Usability: add 4 sec long touch (3rd function) for mode sensor to quickly jump to first mode.
@@ -37,10 +41,10 @@
 #define PIEZO_PIN                                       12
 #define TSENSOR_BRIGHTNESS_PIN                          A0
 #define TSENSOR_MODE_PIN                                A2
-#define TSENSOR_BRIGHTNESS_2ND_FUNCTION_WAITING_TIME  1500 // in milliseconds
-#define TSENSOR_BRIGHTNESS_3RD_FUNCTION_WAITING_TIME  4000 // in milliseconds
-#define TSENSOR_MODE_2ND_FUNCTION_WAITING_TIME        1500 // in milliseconds
-#define TSENSOR_MODE_3RD_FUNCTION_WAITING_TIME        4000 // in milliseconds
+#define TSENSOR_BRIGHTNESS_2ND_FUNCTION_WAITING_TIME  1200 // in milliseconds
+#define TSENSOR_BRIGHTNESS_3RD_FUNCTION_WAITING_TIME  3000 // in milliseconds
+#define TSENSOR_MODE_2ND_FUNCTION_WAITING_TIME        1200 // in milliseconds
+#define TSENSOR_MODE_3RD_FUNCTION_WAITING_TIME        3000 // in milliseconds
 #define EEPROM_ADR_PLAY_IMPERIAL_MARCH                   0
 #define EEPROM_ADR_MASTER_BRIGHTNESS                     1
 #define EEPROM_ADR_MODE                                  2
@@ -170,11 +174,11 @@ void loop( ) {
         mustReleaseBrightnessSensor = true;
       }
     } else if ( ( m - lastMillisBrightness ) > TSENSOR_BRIGHTNESS_3RD_FUNCTION_WAITING_TIME ) {
-        // a very long touch => toggle playing imperial march
-        lastMillisBrightness = m;
-        EEPROM.write( EEPROM_ADR_PLAY_IMPERIAL_MARCH, ( gPlayImperialMarch ? 0 : 1 ) );
-        fPiezoLongTouch( e3RD_FUNC_PIEZO );
-     }
+      // a very long touch => toggle playing imperial march
+      lastMillisBrightness = m;
+      EEPROM.write( EEPROM_ADR_PLAY_IMPERIAL_MARCH, ( gPlayImperialMarch ? 0 : 1 ) );
+      fPiezoLongTouch( e3RD_FUNC_PIEZO );
+    }
   } else {
     if ( touchedBrightness ) {
       // We get here when brightness touch sensor was touched and released.
@@ -207,8 +211,8 @@ void loop( ) {
     if ( !touchedMode )
       touchedMode = true;
     // Check if touch sensor touched for at least TSENSOR_MODE_2ND_FUNCTION_WAITING_TIME milliseconds.
+    uint16_t m = millis( );
     if ( !mustReleaseModeSensor  ) {
-      uint16_t m = millis( );
       if ( ( m - lastMillisMode ) > TSENSOR_MODE_2ND_FUNCTION_WAITING_TIME ) {
         // a long touch => switch to the next mode
         byte noOfModes = eEND_MODE - eSTART_MODE - 1;
@@ -216,13 +220,12 @@ void loop( ) {
         lastMillisMode = m;
         mustReleaseModeSensor = true;
         fPiezoLongTouch( eMODE_PIEZO );
-    } else if ( ( m - lastMillisBrightness ) > TSENSOR_MODE_3RD_FUNCTION_WAITING_TIME ) {
-        // a very long touch => jump to the first mode
-        lastMillisBrightness = m;
-        gCurrentMode = eSTART_MODE + 1;
-        EEPROM.write( EEPROM_ADR_MODE, gCurrentMode );
-        fPiezoLongTouch( e3RD_FUNC_PIEZO );
-     }
+      }
+    } else if ( ( m - lastMillisMode ) > TSENSOR_MODE_3RD_FUNCTION_WAITING_TIME ) {
+      // a very long touch => jump to the first mode
+      lastMillisMode = m;
+      gCurrentMode = eSTART_MODE + 1;
+      fPiezoLongTouch( e3RD_FUNC_PIEZO );
     }
   } else {
     if ( touchedMode ) {
@@ -250,7 +253,7 @@ void loop( ) {
           FastLED.show( );
           EEPROM.write( EEPROM_ADR_FIXED_COLOR_INDEX, gFixedColorIndex );
         }
-        if ( firstTimeAfterBoot ) {
+        if (firstTimeAfterBoot||mustReleaseModeSensor) {
           fill_solid( gLED, LED_NUM_LEDS, ColorFromPalette( myPal, gFixedColorIndex ) );
           FastLED.show( );
           firstTimeAfterBoot = false;
@@ -267,12 +270,14 @@ void loop( ) {
       break;
     case eSTROBE: {
         static bool strobesSet = false;
+        static uint16_t lastMillis = millis( );
         byte maxLEDsOn = ((int)(LED_NUM_LEDS/2)) + 1;
         gStrobeSpeed   = max( gStrobeSpeed, 10  );
         gStrobeSpeed   = min( gStrobeSpeed, 100 );
         if ( shortModeTouch ) {
           gStrobeSpeed = ( gStrobeSpeed>10 ? gStrobeSpeed-10 : 100 );
           EEPROM.write( EEPROM_ADR_STROBE_SPEED, gStrobeSpeed );
+          Serial << "gStrobeSpeed " << gStrobeSpeed << endl;
         }
         if ( !strobesSet ) {
           for( byte i = 0; i < maxLEDsOn; i++ ) {
@@ -281,11 +286,14 @@ void loop( ) {
           }
           strobesSet = true;
         }
-        EVERY_N_MILLISECONDS( gStrobeSpeed ) {
+       // hm. EVERY_N_MILLISECONDS did not work here so have to roll my own.
+        uint16_t m = millis( );
+        if ( ( m - lastMillis ) > gStrobeSpeed ) {
           if ( strobesSet ) {
             fill_solid( gLED, LED_NUM_LEDS, CRGB::Black );
             strobesSet = false;
           }
+          lastMillis = m;
         }
         FastLED.show( );
       }
@@ -353,11 +361,11 @@ void loop( ) {
           FastLED.show( );
           EEPROM.write( EEPROM_ADR_BREATHE_COLOR_INDEX, gBreatheColorIndex );
         }
-        byte brightness = quadwave8( counter++ ); // quadwave8() is nearly sine but 2/3 faster than sin8()
-        if ( brightness > 254 )
-          FastLED.delay( 20 );
+        byte brightness = quadwave8( 3*(counter++) ); // quadwave8() is nearly a sine wave but 2/3 faster than sin8()
         fill_solid( gLED, LED_NUM_LEDS, ColorFromPalette( myPal, gBreatheColorIndex, brightness ) );
         FastLED.show( );
+        if ( brightness > 254 )
+          FastLED.delay( 50 );
       }
       break;
     case eCYCLONE: {
