@@ -2,8 +2,7 @@
 <a href="http://zeropage.io/"><img alt="Stormtrooper Nightlight" align="right" src="http://zeropage.io/wp-content/uploads/github-nightlight-small.gif" /></a>
 An Arduino controlled Stormtrooper nightlight with WS2812b RGB LEDs, touch sensor switches, a potpourri of nice lighting effects and a quite ugly piezo Star Wars(R) intro.
 
-Ein Nachtlicht im Star Wars(R) Stormtrooper Design mit Arduino-gestuerten RGB LED Lichteffekten und, Berührungssensoren und Imperial March Startmusik, die aus einem
-piepsigen Piezo-Summer tönt (abschaltbar;-).
+Ein Nachtlicht im Star Wars(R) Stormtrooper Design mit Arduino-gesteuerten RGB LED Lichteffekten, Berührungssensoren und Imperial March Startmusik, die aus einem piepsigen Piezo-Summer tönt (abschaltbar;-).
 
 ### History
 1.2, 13.09.2016
