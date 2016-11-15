@@ -7,6 +7,9 @@ Watch this <a title="Stormtrooper Nightlight by zeropage" href="https://youtu.be
 Ein Nachtlicht im Star Wars(R) Stormtrooper Design mit Arduino-gesteuerten RGB LED Lichteffekten, Berührungssensoren und Imperial March Startmusik, die aus einem piepsigen Piezo-Summer tönt (abschaltbar;-).
 
 ### History
+1.3, 12.11.2016
+  - Added new mode eWHITE that switches all LEDs to, yes, white.
+
 1.2, 13.09.2016
   - eSTROBE: Using EVERY_N_MILLISECONDS macro did not work. Rolled my own.
   - Very long touching mode button did not work. Used wrong variable names. Fixed.
