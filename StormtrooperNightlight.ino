@@ -1,5 +1,5 @@
 //
-// Stormtrooper Nightlight v1.2
+// Stormtrooper Nightlight v1.3
 // Copyright (C) 2016 Axel Dietrich <foobar@zeropage.io>
 // http://zeropage.io
 //
@@ -18,6 +18,8 @@
 // <http://www.gnu.org/licenses/>.
 //
 // History
+// 1.3, 12.11.2016
+//   - Added new mode eWHITE that switches all LEDs to, yes, white.
 // 1.2, 13.09.2016
 //   - eSTROBE: Using EVERY_N_MILLISECONDS macro did not work. Rolled my own.
 //   - Very long touching mode button did not work. Used wrong variable names. Fixed.
@@ -62,7 +64,7 @@
 #define DEBUG                                            0
 CRGB gLED[ LED_NUM_LEDS ];
 CRGBPalette16 myPal = RainbowColors_p;
-enum          gModes            { eSTART_MODE, eFIXED_COLOR, eCOLOR_TWINKLES, eSTROBE, eRAINBOW, eRAINBOW_WITH_GLITTER, eCONFETTI, eBPM, eBREATHE, eCYCLONE, eEND_MODE };
+enum          gModes            { eSTART_MODE, eFIXED_COLOR, eCOLOR_TWINKLES, eSTROBE, eRAINBOW, eRAINBOW_WITH_GLITTER, eCONFETTI, eBPM, eBREATHE, eCYCLONE, eWHITE, eEND_MODE };
 enum          gPiezoModes       { eBRIGHTNESS_PIEZO, eMODE_PIEZO, e3RD_FUNC_PIEZO };
 uint16_t      gTouchBrightnessRef;
 uint16_t      gTouchModeRef;
@@ -386,6 +388,15 @@ void loop( ) {
         }
       }
       break;
+    case eWHITE: {
+        static bool firstTimeAfterBoot = true;
+        if (firstTimeAfterBoot||mustReleaseModeSensor) {
+          fill_solid( gLED, LED_NUM_LEDS, CRGB( 255, 255, 255 ) ); // set all LEDs to white
+          FastLED.show( );
+          firstTimeAfterBoot = false;
+        }
+      }
+      break;
     default:
       break;
   }
@@ -631,5 +642,3 @@ void fPiezoLongTouch( byte mode )
       break;
   }
 }
-
-
