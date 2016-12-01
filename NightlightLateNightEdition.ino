@@ -1,9 +1,9 @@
 //
-// Stormtrooper Nightlight v1.3
+// Nightlight Late-Night Edition v1.3
 // Copyright (C) 2016 Axel Dietrich <foobar@zeropage.io>
 // http://zeropage.io
 //
-// An Arduino controlled Stormtrooper nightlight with WS2812b RGB LEDs,
+// An Arduino controlled nightlight with WS2812b RGB LEDs,
 // touch sensor switches, a potpourri of nice lighting effects and a
 // quite ugly piezo Star Wars(R) intro.
 //
@@ -132,7 +132,7 @@ void setup( ) {
 
   // Welcome to the pleasure dome!
   if ( DEBUG ) {
-    Serial << endl << endl << F( "Welcome to Stormtrooper Nightlight v1.0" ) << endl;
+    Serial << endl << endl << F( "Welcome to Nightlight Late-Night Edition v1.3" ) << endl;
     Serial << F( "(C) 2016 Axel Dietrich <foobar@zeropage.io>" ) << endl;
     Serial << F( "Type h for a list of commands." ) << endl;
   }
