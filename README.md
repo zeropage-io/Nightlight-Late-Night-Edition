@@ -4,7 +4,7 @@ An Arduino controlled night light with WS2812b RGB LEDs, touch sensor switches, 
 
 Watch this <a title="Stormtrooper Nightlight by zeropage" href="https://youtu.be/YXsqjSVHjwk" target="_blank">video</a> on YouTube to see the nightlight in action!<br />
 Get the STL-files for 3D printing <a title="Nightlight Late-Night Edition on Thingiverse" href="http://www.thingiverse.com/thing:1784830" target="_blank">on Thingiverse</a>.<br />
-Full build instructions here <a title="Build instructions for Nightlight Late-Night Edition on zeropage.io" href="http://zeropage.io/nightlight-late-night-edition/" target="_blank">Nightlight Late-Night Edition with Arduino controlled LED light effects</a>.
+Full build instructions here <a title="Build instructions for Nightlight Late-Night Edition on zeropage.io" href="http://zeropage.io/nightlight-late-night-edition/" target="_blank">Nightlight Late-Night Edition</a>.
 
 Ein Nachtlicht mit unterschiedlichen Designs. Arduino-gesteuerte RGB LED Lichteffekte, Berührungssensoren und Imperial March Startmusik, die aus einem piepsigen Piezo-Summer tönt (abschaltbar;-).
 
