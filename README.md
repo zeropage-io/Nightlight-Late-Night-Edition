@@ -1,5 +1,4 @@
 # Nightlight-Late-Night-Edition
-<a href="http://zeropage.io/"><img alt="Stormtrooper Nightlight" align="right" src="http://zeropage.io/wp-content/uploads/github-nightlight-small.gif" /></a>
 An Arduino controlled night light with WS2812b RGB LEDs, touch sensor switches, a potpourri of nice lighting effects and a quite ugly piezo Star Wars(R) intro.
 
 Get the STL-files for 3D printing <a title="Nightlight Late-Night Edition on Thingiverse" href="http://www.thingiverse.com/thing:1784830" target="_blank">on Thingiverse</a>.<br />
